@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#04080d" />
+    <meta
+      name="description"
+      content="Explore 244 mathematical attractors. Rotate their sampled orbits and inspect the short formulas that produced them."
+    />
+    <title>Attractor Genome — Specimen gallery</title>
+    <link rel="icon" href="./mark.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      as="font"
+      href="./fonts/InstrumentSerif-Regular.ttf"
+      type="font/ttf"
+      crossorigin
+    />
+    <link rel="preload" as="image" href="./media/compact_13197/plate.webp" />
+    <link rel="stylesheet" href="./gallery.css" />
+  </head>
+  <body>
+    <main aria-label="Attractor Genome">
+      <section class="exhibit" aria-label="Specimen gallery">
+        <div class="instrument">
+          <div
+            class="stage"
+            id="stage"
+            role="group"
+            aria-label="Orbital shell specimen view"
+          >
+            <img
+              id="poster"
+              src="./media/compact_13197/plate.webp"
+              width="1080"
+              height="938"
+              alt="Orbital shell, a density portrait of compact_13197"
+              draggable="false"
+            />
+            <canvas id="orbiter" aria-hidden="true"></canvas>
+            <span class="fiducial nw" aria-hidden="true"></span
+            ><span class="fiducial ne" aria-hidden="true"></span
+            ><span class="fiducial sw" aria-hidden="true"></span
+            ><span class="fiducial se" aria-hidden="true"></span>
+          </div>
+          <div class="readout">
+            <button id="notes" aria-haspopup="dialog" aria-label="Field notes">
+              <span id="mode">3D lift</span>
+              <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+                <path d="M4 12 12 4 M4.5 4H12v7.5" />
+              </svg>
+            </button>
+          </div>
+          <div class="orbit-tools">
+            <button id="turn" hidden aria-label="Rotate specimen">
+              <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+                <path d="M13.5 6.5a5.5 5.5 0 1 0-.4 4.15 M13.5 2.5v4.1H9.4" />
+              </svg>
+              <span>Rotate</span></button
+            ><button id="reset" hidden>Reset view</button>
+          </div>
+        </div>
+      </section>
+      <section class="reel" aria-label="Collection navigation">
+        <div class="rail-head">
+          <button
+            class="browse"
+            id="browse"
+            aria-haspopup="dialog"
+            aria-keyshortcuts="/"
+          >
+            Browse all
+          </button>
+          <div class="arrows">
+            <button
+              id="prev"
+              aria-label="Previous specimen"
+              aria-keyshortcuts="ArrowLeft"
+            >
+              <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+                <path d="M13.5 8h-11 M7.5 3l-5 5 5 5" />
+              </svg></button
+            ><button
+              id="next"
+              aria-label="Next specimen"
+              aria-keyshortcuts="ArrowRight"
+            >
+              <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+                <path d="M2.5 8h11 M8.5 3l5 5-5 5" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="film" id="film" aria-label="Specimens"></div>
+        <div class="ruler">
+          <input
+            aria-label="Collection position"
+            type="range"
+            id="scrub"
+            min="0"
+            max="243"
+            value="0"
+            aria-valuetext="001, Orbital shell"
+          /><span class="edition" aria-label="Specimen position"
+            ><b id="serial">001</b><span class="division">/</span
+            ><span id="total">244</span></span
+          >
+        </div>
+      </section>
+      <p id="load-error" role="alert" hidden></p>
+      <div class="sr" id="announcement" role="status" aria-live="polite"></div>
+    </main>
+    <dialog id="index-dialog" aria-labelledby="index-title">
+      <div class="dialog-heading">
+        <h2 id="index-title">Collection <em>index</em></h2>
+        <button class="close" aria-label="Close index">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+            <path d="M3.5 3.5l9 9 M12.5 3.5l-9 9" />
+          </svg>
+        </button>
+      </div>
+      <div class="index-controls">
+        <input
+          type="search"
+          id="search"
+          placeholder="Find a specimen or cell"
+          aria-label="Find a specimen or cell"
+        /><select id="filter" aria-label="Specimen dimension">
+          <option value="">All dimensions</option>
+          <option value="2">2D</option>
+          <option value="3">3D</option>
+        </select>
+      </div>
+      <p id="matches" role="status"></p>
+      <div id="grid"></div>
+    </dialog>
+    <dialog id="note-dialog" aria-labelledby="note-title">
+      <div class="dialog-heading">
+        <h2 id="note-title">Field <em>notes</em></h2>
+        <button class="close" aria-label="Close field notes">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+            <path d="M3.5 3.5l9 9 M12.5 3.5l-9 9" />
+          </svg>
+        </button>
+      </div>
+      <dl id="measurements"></dl>
+      <h4>Python formula</h4>
+      <pre><code id="formula"></code></pre>
+      <p class="source">
+        An attractor is a pattern that repeated updates draw a system toward.
+        Each plate combines 40,000 iterations at each of 16 phases. The orbit
+        view projects all 640,000 visits at the selected angle.
+      </p>
+      <div class="note-links">
+        <a class="studio" href="./studio/">Open in studio</a
+        ><button id="about" aria-haspopup="dialog">About the atlas</button>
+      </div>
+    </dialog>
+    <dialog id="about-dialog" aria-labelledby="about-title">
+      <div class="dialog-heading">
+        <h2 id="about-title">Inside the atlas</h2>
+        <button class="close" aria-label="Close about">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 16 16">
+            <path d="M3.5 3.5l9 9 M12.5 3.5l-9 9" />
+          </svg>
+        </button>
+      </div>
+      <p>
+        Every shape in this gallery comes from a short formula. Start with one
+        point, apply the formula, and feed the result back into it. The bright
+        threads mark places the orbit returns to most often.
+      </p>
+      <p>
+        The discovery run evaluated <strong id="evaluated"></strong> formulas.
+        The atlas brings together the reference orbit and 243 discoveries from
+        different cells in the search grid.
+      </p>
+    </dialog>
+    <noscript>Interactive gallery unavailable without JavaScript.</noscript>
+    <script src="./gallery.js" type="module"></script>
+  </body>
+</html>
